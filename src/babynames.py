@@ -1,19 +1,56 @@
 import argparse
 import pprint as pp
+import random
+
 
 def prep_arg_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("operation", type=str, default="full", help="operation to perform. Options are full, first, or last")
     parser.add_argument("-n", "--number", type=int, default=1, help="number of baby names.")
+    parser.add_argument("-s", "--source", type=str, default="usa2010", help="desired source of baby names.")
+    parser.add_argument("-g", "--gender", type=str, default="m", help="gender of baby.")
     return parser
 
 
-def first():
-    return "Benj"
+def random_line(afile):
+    line = next(afile)
+    for num, aline in enumerate(afile, 2):
+        if random.randrange(num): continue
+            line = aline
+    return line.rstrip()
 
 
-def last():
-    return "Bay"
+def get_data(filename):
+    return open(f"data/{filename}")
+
+
+def rnd_line_from_data(filename):
+    f = get_data(filename)
+    line = random_line(f)
+    f.close()
+    return line
+
+
+def rnd_lines_from_data(filename, n):
+    f = get_data(filename)
+    line = random_line(f)
+    f.close()
+    return line
+
+
+def estimate_case(name):
+    result = name.lower()
+    c1 = result[0].capitalize()
+    result = c1 + result[1:]
+    return result
+
+
+def first(source, gender):
+    return rnd_line_from_data(f"{source}_{gender}.txt")
+
+
+def last(source):
+    return rnd_line_from_data(f"{source}_last.txt")
 
 
 def process_args(args):
@@ -23,11 +60,11 @@ def process_args(args):
         return
     for i in range(args.number):
         if args.operation == "full":
-            results.append(f"{first()} {last()}")
+            results.append(f"{first(args.source, args.gender)} {last(args.source)}")
         elif args.operation == "first":
-            results.append(f"{first()}")
+            results.append(first(args.source, args.gender))
         elif args.operation == "last":
-            results.append(f"{last()}")
+            results.append(last(args.source))
     return results
 
 
@@ -35,7 +72,7 @@ def main():
     parser = prep_arg_parser()
     args = parser.parse_args()
     names = process_args(args)
-    pp.pprint(names)
+    print(*names, sep = "\n") 
 
 
 main()
