@@ -1,13 +1,26 @@
 import argparse
 import pprint as pp
 import random
+import datetime
+import pytz
+
+
+def timestamp():
+    def utc_to_local(utc_dt):
+        local_tz = pytz.timezone('US/Pacific')
+        local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
+        return local_tz.normalize(local_dt)
+    now = datetime.datetime.utcnow()
+    dt = utc_to_local(now)
+    formatted = dt.strftime("%Y%m%d-%H%M%S")
+    return formatted
 
 
 def prep_arg_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("operation", type=str, default="full", help="operation to perform. Options are full, first, or last")
     parser.add_argument("-n", "--number", type=int, default=1, help="number of baby names.")
-    parser.add_argument("-s", "--source", type=str, default="usa2010", help="desired source of baby names.")
+    parser.add_argument("-s", "--source", type=str, default="usa1990", help="desired source of baby names.")
     parser.add_argument("-g", "--gender", type=str, default="m", help="gender of baby.")
     return parser
 
@@ -15,9 +28,10 @@ def prep_arg_parser():
 def random_line(afile):
     line = next(afile)
     for num, aline in enumerate(afile, 2):
-        if random.randrange(num): continue
-            line = aline
-    return line.rstrip()
+        if random.randrange(num):
+            continue
+        line = aline
+    return estimate_case(line.rstrip())
 
 
 def get_data(filename):
@@ -46,7 +60,7 @@ def estimate_case(name):
 
 
 def first(source, gender):
-    return rnd_line_from_data(f"{source}_{gender}.txt")
+    return rnd_line_from_data(f"{source}_first_{gender}.txt")
 
 
 def last(source):
