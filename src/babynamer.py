@@ -18,7 +18,7 @@ def timestamp():
 
 def prep_arg_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument("operation", type=str, default="full", help="operation to perform. Options are full, first, or last")
+    parser.add_argument("-o", "--operation", type=str, default="full", help="operation to perform. Choices are full, first, or last")
     parser.add_argument("-n", "--number", type=int, default=1, help="number of baby names.")
     parser.add_argument("-s", "--source", type=str, default="usa1990", help="desired source of baby names.")
     parser.add_argument("-g", "--gender", type=str, default="m", help="gender of baby.")
@@ -79,6 +79,8 @@ def process_args(args):
             results.append(first(args.source, args.gender))
         elif args.operation == "last":
             results.append(last(args.source))
+        else:
+            raise Exception("Operation must be full, first, or last.")
     return results
 
 
