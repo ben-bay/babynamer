@@ -80,7 +80,7 @@ def process_args(args):
         elif args.operation == "last":
             results.append(last(args.source))
         else:
-            raise Exception("Operation must be full, first, or last.")
+            raise Exception("Operation choices: full, first, or last.")
     return results
 
 
@@ -88,7 +88,7 @@ def main():
     parser = prep_arg_parser()
     args = parser.parse_args()
     names = process_args(args)
-    print(*names, sep = "\n") 
+    print(*names, sep = "\n")
 
 
 main()
